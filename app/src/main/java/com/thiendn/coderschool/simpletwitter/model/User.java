@@ -11,12 +11,14 @@ public class User {
     @SerializedName("name") private String name;
     @SerializedName("screen_name") private String screenName;
     @SerializedName("verified") private boolean verified;
+    @SerializedName("profile_image_url") private String imageProfile;
 
-    public User(String id, String name, String screenName, boolean verified) {
+    public User(String id, String name, String screenName, boolean verified, String imageProfile) {
         this.id = id;
         this.name = name;
         this.screenName = screenName;
         this.verified = verified;
+        this.imageProfile = imageProfile;
     }
 
     public User() {
@@ -36,5 +38,9 @@ public class User {
 
     public boolean isVerified() {
         return verified;
+    }
+
+    public String getImageProfile() {
+        return imageProfile;
     }
 }

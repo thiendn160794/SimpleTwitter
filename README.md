@@ -24,10 +24,10 @@ The following **optional** features are implemented:
 * [x] User can **see a counter with total number of characters left for tweet** on compose tweet page
 * [x] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [x] User can **pull down to refresh tweets timeline**
-* [ ] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
+* [x] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
 * [ ] User can tap a tweet to **open a detailed tweet view**
 * [x] User can **select "reply" from detail view to respond to a tweet**
-* [ ] Improve the user interface and theme the app to feel "twitter branded"
+* [x] Improve the user interface and theme the app to feel "twitter branded"
 
 The following **bonus** features are implemented:
 
@@ -52,13 +52,14 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/thiendn160794/SimpleTwitter/blob/master/twitter.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+- User can actual reply to a tweet. But I don't know how to show tweet with quote, so you can reply on the app then check on the browser.
+- Realm is difficult, it take me too much time to debug.
 
 ## Open-source libraries used
 

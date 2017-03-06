@@ -126,8 +126,10 @@ public class ComposeDialog extends DialogFragment {
                 int charRemain = 140 - charCount;
                 if (charRemain < 0){
                     numberOfCharacter.setTextColor(ContextCompat.getColor(mContext, android.R.color.holo_red_light));
+                    btnTweet.setEnabled(false);
                 }else{
                     numberOfCharacter.setTextColor(ContextCompat.getColor(mContext, android.R.color.darker_gray));
+                    btnTweet.setEnabled(true);
                 }
                 numberOfCharacter.setText(charRemain + "");
             }

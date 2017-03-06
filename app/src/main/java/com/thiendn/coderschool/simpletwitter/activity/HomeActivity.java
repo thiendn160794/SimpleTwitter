@@ -23,6 +23,7 @@ import com.thiendn.coderschool.simpletwitter.util.ParseResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,49 +50,57 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        page = 1;
         ButterKnife.bind(this);
         restClient = RestApplication.getRestClient();
-        initSetup();
         getTimeline();
+
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
                 getTimeline();
             }
         });
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getBaseContext(), "clicked", Toast.LENGTH_LONG).show();
                 android.app.FragmentManager fm = getFragmentManager();
-                ComposeDialog composeDialog = ComposeDialog.newInstance(getBaseContext(), new ComposeDialog.Listener() {
+                ComposeDialog composeDialog = ComposeDialog.newInstance(null, getBaseContext(), new ComposeDialog.Listener() {
                     @Override
                     public void onComposeTweetSuccess(Tweet tweet) {
                         mTweets.add(0, tweet);
                         mAdapter.notifyDataSetChanged();
                     }
                 });
-                composeDialog.show(fm, "Setting");
+                composeDialog.show(fm, "Pose");
             }
         });
     }
 
     private void getTimeline(){
         System.out.println("da toi day");
-        restClient.getHomeTimeline(1, new JsonHttpResponseHandler(){
+        restClient.getHomeTimeline(page, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
                 if (response != null){
                     Log.d("Timeline Response", response.toString());
-                    mTweets = ParseResponse.getTweetFromResp(response);
+                    if (page == 1){
+                        System.out.println("page =" + page);
+                        mTweets = ParseResponse.getTweetFromResp(response);
+                        setupAdapter();
+                        fetchTimeline();
+                        swipeContainer.setRefreshing(false);
+                    }else {
+                        for (Tweet tweet: ParseResponse.getTweetFromResp(response)){
+                            mTweets.add(tweet);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
                     System.out.println(mTweets.size());
-
-                    fetchTimeline();
-                    swipeContainer.setRefreshing(false);
-//                    for (Tweet tweet: mTweets){
-//                        Log.d("List value", tweet.getEntity().getMedia() + "");
-//                    }
                 }
                 else {
                     Log.w("Timeline Response", "null");
@@ -120,12 +129,35 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
         });
     }
 
-    private void initSetup(){
-        page = 1;
+    private void setupAdapter(){
+        mAdapter = new TimeLineAdapter(mTweets, new TimeLineAdapter.Listener() {
+            @Override
+            public void onLoadMore() {
+                page++;
+                getTimeline();
+            }
+
+            @Override
+            public void onItemClicked(View itemView) {
+
+            }
+
+            @Override
+            public void onReply(String screenname) {
+                android.app.FragmentManager fm = getFragmentManager();
+                ComposeDialog composeDialog = ComposeDialog.newInstance(screenname, getBaseContext(), new ComposeDialog.Listener() {
+                    @Override
+                    public void onComposeTweetSuccess(Tweet tweet) {
+                        mTweets.add(0, tweet);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                composeDialog.show(fm, "Pose");
+            }
+        });
     }
 
     private void fetchTimeline(){
-        mAdapter = new TimeLineAdapter(mTweets);
         RecyclerView.LayoutManager layoutManager =
                 new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
         rvTimeline.setLayoutManager(layoutManager);

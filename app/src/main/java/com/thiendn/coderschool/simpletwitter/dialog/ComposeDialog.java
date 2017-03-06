@@ -38,6 +38,7 @@ import cz.msebera.android.httpclient.Header;
 public class ComposeDialog extends DialogFragment {
     private Context mContext;
     private Listener mListener;
+    private String mScreenName;
 //    @BindView(R.id.Esc)
 //    ImageView esc;
     ImageView esc;
@@ -48,12 +49,13 @@ public class ComposeDialog extends DialogFragment {
     Button btnTweet;
     TextView numberOfCharacter;
 
-    public static ComposeDialog newInstance(Context context, Listener listener){
+    public static ComposeDialog newInstance(String screenname, Context context, Listener listener){
         ComposeDialog f = new ComposeDialog();
         Bundle args = new Bundle();
         f.setArguments(args);
         f.setContext(context);
         f.setListener(listener);
+        f.setScreenname(screenname);
         return f;
     }
 
@@ -69,10 +71,15 @@ public class ComposeDialog extends DialogFragment {
         mListener = listener;
     }
 
+    private void setScreenname(String screenname){
+        this.mScreenName = screenname;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.post_fragment, container);
+
 //        ButterKnife.bind(this, view);
         esc = (ImageView) view.findViewById(R.id.Esc);
         ivProfile = (ImageView) view.findViewById(R.id.ivProfile);
@@ -81,7 +88,11 @@ public class ComposeDialog extends DialogFragment {
         editText = (EditText) view.findViewById(R.id.etText);
         btnTweet = (Button) view.findViewById(R.id.btnTweet);
         numberOfCharacter = (TextView) view.findViewById(R.id.tvNumberOfCharacter);
-
+        if (mScreenName == null) getDialog().setTitle("Compose New Tweet");
+        if (mScreenName != null) {
+            editText.setText("@" + mScreenName);
+            getDialog().setTitle("Reply");
+        }
         esc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,6 +130,7 @@ public class ComposeDialog extends DialogFragment {
                 //Dont care
             }
         });
+
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

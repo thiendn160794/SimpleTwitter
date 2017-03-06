@@ -48,7 +48,7 @@ public class RestClient extends OAuthBaseClient {
     public void favoriteTweet(long idPost, JsonHttpResponseHandler handler){
         String apiUrl = getApiUrl("favorites/create.json");
         RequestParams params = new RequestParams();
-        params.put("id", String.valueOf(idPost));
+        params.put("id", idPost);
         getClient().post(apiUrl, params, handler);
     }
 

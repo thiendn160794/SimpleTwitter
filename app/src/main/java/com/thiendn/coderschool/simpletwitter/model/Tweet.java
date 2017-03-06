@@ -10,7 +10,8 @@ import java.util.List;
 
 public class Tweet {
     @SerializedName("created_at") private String createdDate;
-    @SerializedName("id_str") private String id;
+    @SerializedName("id_str") private String idStr;
+    @SerializedName("id") private long id;
     @SerializedName("text") private String text;
     @SerializedName("favorite_count") private int favoriteCount;
     @SerializedName("favorited") private boolean favorite;
@@ -20,8 +21,9 @@ public class Tweet {
     @SerializedName("user") private User user;
     @SerializedName("entities") private Entity entity;
 
-    public Tweet(String createdDate, String id, String text, int favoriteCount, boolean favorite, int retweetCount, List<Url> urls, String url, User user, Entity entity) {
+    public Tweet(String createdDate, String idStr, long id, String text, int favoriteCount, boolean favorite, int retweetCount, List<Url> urls, String url, User user, Entity entity) {
         this.createdDate = createdDate;
+        this.idStr = idStr;
         this.id = id;
         this.text = text;
         this.favoriteCount = favoriteCount;
@@ -40,7 +42,11 @@ public class Tweet {
         return createdDate;
     }
 
-    public String getId() {
+    public String getIdStr() {
+        return idStr;
+    }
+
+    public long getId() {
         return id;
     }
 

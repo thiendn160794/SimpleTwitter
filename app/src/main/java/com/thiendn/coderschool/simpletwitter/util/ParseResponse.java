@@ -29,4 +29,10 @@ public class ParseResponse {
                 new TypeToken<User>(){}.getType());
         return currentUser;
     }
+    public static Tweet getTweetFromResponse(JSONObject response){
+        Tweet tweet = gson.fromJson(response.toString(),
+                new TypeToken<Tweet>(){}.getType());
+
+        return tweet;
+    }
 }

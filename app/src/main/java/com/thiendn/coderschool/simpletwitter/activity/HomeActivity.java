@@ -2,15 +2,20 @@ package com.thiendn.coderschool.simpletwitter.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.codepath.oauth.OAuthLoginActionBarActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.thiendn.coderschool.simpletwitter.R;
 import com.thiendn.coderschool.simpletwitter.adapter.TimeLineAdapter;
 import com.thiendn.coderschool.simpletwitter.application.RestApplication;
+import com.thiendn.coderschool.simpletwitter.dialog.ComposeDialog;
 import com.thiendn.coderschool.simpletwitter.model.Tweet;
 import com.thiendn.coderschool.simpletwitter.rest.RestClient;
 import com.thiendn.coderschool.simpletwitter.util.ParseResponse;
@@ -34,17 +39,41 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
     List<Tweet> mTweets;
     TimeLineAdapter mAdapter;
 
+    @BindView(R.id.btnAdd)
+    FloatingActionButton btnAdd;
     @BindView(R.id.rvTimeline)
     RecyclerView rvTimeline;
+    @BindView(R.id.swipeContainer)
+    SwipeRefreshLayout swipeContainer;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
         restClient = RestApplication.getRestClient();
-        getTimeline();
         initSetup();
-//        fetchTimeline();
+        getTimeline();
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getTimeline();
+            }
+        });
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(), "clicked", Toast.LENGTH_LONG).show();
+                android.app.FragmentManager fm = getFragmentManager();
+                ComposeDialog composeDialog = ComposeDialog.newInstance(getBaseContext(), new ComposeDialog.Listener() {
+                    @Override
+                    public void onComposeTweetSuccess(Tweet tweet) {
+                        mTweets.add(0, tweet);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                composeDialog.show(fm, "Setting");
+            }
+        });
     }
 
     private void getTimeline(){
@@ -57,7 +86,12 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
                     Log.d("Timeline Response", response.toString());
                     mTweets = ParseResponse.getTweetFromResp(response);
                     System.out.println(mTweets.size());
+
                     fetchTimeline();
+                    swipeContainer.setRefreshing(false);
+//                    for (Tweet tweet: mTweets){
+//                        Log.d("List value", tweet.getEntity().getMedia() + "");
+//                    }
                 }
                 else {
                     Log.w("Timeline Response", "null");
@@ -88,7 +122,6 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
 
     private void initSetup(){
         page = 1;
-        mAdapter = new TimeLineAdapter(mTweets);
     }
 
     private void fetchTimeline(){

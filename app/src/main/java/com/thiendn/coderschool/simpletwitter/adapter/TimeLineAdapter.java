@@ -2,6 +2,7 @@ package com.thiendn.coderschool.simpletwitter.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thiendn.coderschool.simpletwitter.R;
 import com.thiendn.coderschool.simpletwitter.model.Tweet;
+import com.thiendn.coderschool.simpletwitter.util.DateUtil;
 
 import java.util.List;
 
@@ -36,7 +38,8 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.tvUsername.setText(mTweets.get(position).getUser().getName());
         holder.tvScreenName.setText("@" + mTweets.get(position).getUser().getScreenName());
-        holder.tvCreateDate.setText(mTweets.get(position).getCreatedDate());
+        String relativeTimestamp = DateUtil.getRelativeTimeAgo(mTweets.get(position).getCreatedDate());
+        holder.tvCreateDate.setText(relativeTimestamp);
         holder.tvText.setText(mTweets.get(position).getText());
         holder.tvRetweet.setText(mTweets.get(position).getRetweetCount() + "");
         holder.tvFavorite.setText(mTweets.get(position).getFavoriteCount() + "");
@@ -45,6 +48,17 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         }
         Picasso.with(context).load(mTweets.get(position).getUser().getImageProfile())
                 .into(holder.ivProfile);
+        Log.d("TimeLineAdapter","text: " + mTweets.get(position).getText() + ", position: " + position + ", media: " + mTweets.get(position).getEntity().getMedia());
+        if (mTweets.get(position).getEntity().getMedia() == null) holder.ivMedia.setVisibility(View.GONE);
+        if (mTweets.get(position).getEntity().getMedia() != null){
+            if (mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl()!= null &&
+                    !mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl().equals("")){
+                holder.ivMedia.setVisibility(View.VISIBLE);
+                Picasso.with(context).load(mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl())
+                        .into(holder.ivMedia);
+                Log.d("TimeLineAdapter", "position: " + position + ", urlImage: " + mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl());
+            }
+        }
     }
 
     @Override
@@ -66,6 +80,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         private TextView tvText;
         private TextView tvRetweet;
         private TextView tvFavorite;
+        private ImageView ivMedia;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -77,6 +92,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
             tvText = (TextView) itemView.findViewById(R.id.tvText);
             tvRetweet = (TextView) itemView.findViewById(R.id.tvRetweet);
             tvFavorite = (TextView) itemView.findViewById(R.id.tvFavorite);
+            ivMedia = (ImageView) itemView.findViewById(R.id.ivMedia);
         }
     }
 

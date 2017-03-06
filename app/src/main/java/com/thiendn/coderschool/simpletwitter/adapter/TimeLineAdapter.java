@@ -1,7 +1,6 @@
 package com.thiendn.coderschool.simpletwitter.adapter;
 
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 import com.thiendn.coderschool.simpletwitter.R;
-import com.thiendn.coderschool.simpletwitter.activity.HomeActivity;
 import com.thiendn.coderschool.simpletwitter.application.RestApplication;
 import com.thiendn.coderschool.simpletwitter.model.Tweet;
 import com.thiendn.coderschool.simpletwitter.util.DateUtil;
@@ -62,7 +59,8 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         Picasso.with(context).load(mTweets.get(position).getUser().getImageProfile())
                 .into(holder.ivProfile);
         Log.d("TimeLineAdapter","text: " + mTweets.get(position).getText() + ", position: " + position + ", media: " + mTweets.get(position).getEntity().getMedia());
-        if (mTweets.get(position).getEntity().getMedia() == null) holder.ivMedia.setVisibility(View.GONE);
+        if (mTweets.get(position).getEntity().getMedia() == null
+                || mTweets.get(position).getEntity().getMedia().size() == 0) holder.ivMedia.setVisibility(View.GONE);
         if (mTweets.get(position).getEntity().getMedia() != null
                 && mTweets.get(position).getEntity().getMedia().size() > 0){
             if (mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl()!= null &&
@@ -121,7 +119,7 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         holder.ivReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onReply(mTweets.get(position).getUser().getScreenName());
+                mListener.onReply(mTweets.get(position).getId(), mTweets.get(position).getUser().getScreenName());
             }
         });
 
@@ -181,6 +179,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
     public interface Listener{
         void onLoadMore();
         void onItemClicked(View itemView);
-        void onReply(String screenname);
+        void onReply(long postId, String screenname);
     }
 }

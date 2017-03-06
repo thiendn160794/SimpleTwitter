@@ -58,4 +58,12 @@ public class RestClient extends OAuthBaseClient {
         params.put("id", idPost);
         getClient().post(apiUrl, params, handler);
     }
+
+    public void replyTweet(long idPost, String body, JsonHttpResponseHandler handler){
+        String apiUrl = getApiUrl("statuses/update.json");
+        RequestParams params = new RequestParams();
+        params.put("in_reply_to_status_id", idPost);
+        params.put("status", body);
+        getClient().post(apiUrl, params, handler);
+    }
 }

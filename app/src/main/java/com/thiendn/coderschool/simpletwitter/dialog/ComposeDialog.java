@@ -39,6 +39,7 @@ public class ComposeDialog extends DialogFragment {
     private Context mContext;
     private Listener mListener;
     private String mScreenName;
+    private long mPostId;
 //    @BindView(R.id.Esc)
 //    ImageView esc;
     ImageView esc;
@@ -49,13 +50,14 @@ public class ComposeDialog extends DialogFragment {
     Button btnTweet;
     TextView numberOfCharacter;
 
-    public static ComposeDialog newInstance(String screenname, Context context, Listener listener){
+    public static ComposeDialog newInstance(long postId, String screenname, Context context, Listener listener){
         ComposeDialog f = new ComposeDialog();
         Bundle args = new Bundle();
         f.setArguments(args);
         f.setContext(context);
         f.setListener(listener);
         f.setScreenname(screenname);
+        f.setPostId(postId);
         return f;
     }
 
@@ -75,6 +77,10 @@ public class ComposeDialog extends DialogFragment {
         this.mScreenName = screenname;
     }
 
+    private void setPostId(long postId){
+        this.mPostId = postId;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +98,7 @@ public class ComposeDialog extends DialogFragment {
         if (mScreenName != null) {
             editText.setText("@" + mScreenName);
             getDialog().setTitle("Reply");
+            btnTweet.setText("Reply");
         }
         esc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,20 +141,37 @@ public class ComposeDialog extends DialogFragment {
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String body = editText.getText().toString();
-                RestApplication.getRestClient().postTweet(body, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        super.onSuccess(statusCode, headers, response);
-                        if (200 == statusCode) {
-                            Log.d("OnTweet", response.toString());
-                            Tweet tweet = ParseResponse.getTweetFromResponse(response);
-                            mListener.onComposeTweetSuccess(tweet);
+                if (mScreenName == null){
+                    String body = editText.getText().toString();
+                    RestApplication.getRestClient().postTweet(body, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            super.onSuccess(statusCode, headers, response);
+                            if (200 == statusCode) {
+                                Log.d("OnTweet", response.toString());
+                                Tweet tweet = ParseResponse.getTweetFromResponse(response);
+                                mListener.onComposeTweetSuccess(tweet);
 
-                            getDialog().dismiss();
+                                getDialog().dismiss();
+                            }
                         }
-                    }
-                });
+                    });
+                }else {
+                    String body = editText.getText().toString();
+                    RestApplication.getRestClient().replyTweet(mPostId, body, new JsonHttpResponseHandler(){
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                            super.onSuccess(statusCode, headers, response);
+                            if (200 == statusCode) {
+                                Log.d("OnTweet", response.toString());
+                                Tweet tweet = ParseResponse.getTweetFromResponse(response);
+                                mListener.onComposeTweetSuccess(tweet);
+                                getDialog().dismiss();
+                            }
+                        }
+                    });
+                }
+
             }
         });
         return view;

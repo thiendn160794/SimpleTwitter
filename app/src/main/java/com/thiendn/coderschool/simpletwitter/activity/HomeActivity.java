@@ -76,9 +76,8 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
             btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getBaseContext(), "clicked", Toast.LENGTH_LONG).show();
                     android.app.FragmentManager fm = getFragmentManager();
-                    ComposeDialog composeDialog = ComposeDialog.newInstance(null, getBaseContext(), new ComposeDialog.Listener() {
+                    ComposeDialog composeDialog = ComposeDialog.newInstance(0, null, getBaseContext(), new ComposeDialog.Listener() {
                         @Override
                         public void onComposeTweetSuccess(Tweet tweet) {
                             mTweets.add(0, tweet);
@@ -102,7 +101,7 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
                 }
 
                 @Override
-                public void onReply(String screenname) {
+                public void onReply(long postId, String screenname) {
 
                 }
             });
@@ -174,9 +173,9 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
             }
 
             @Override
-            public void onReply(String screenname) {
+            public void onReply(long postId, String screenname) {
                 android.app.FragmentManager fm = getFragmentManager();
-                ComposeDialog composeDialog = ComposeDialog.newInstance(screenname, getBaseContext(), new ComposeDialog.Listener() {
+                ComposeDialog composeDialog = ComposeDialog.newInstance(postId, screenname, getBaseContext(), new ComposeDialog.Listener() {
                     @Override
                     public void onComposeTweetSuccess(Tweet tweet) {
                         mTweets.add(0, tweet);

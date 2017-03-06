@@ -100,6 +100,7 @@ public class ComposeDialog extends DialogFragment {
             getDialog().setTitle("Reply");
             btnTweet.setText("Reply");
         }
+        editText.setSelection(editText.getText().length());
         esc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +115,8 @@ public class ComposeDialog extends DialogFragment {
         tvScreenname.setText("@" + screenname);
         Picasso.with(mContext).load(profileimage)
                 .into(ivProfile);
+        int remain = 140 - editText.getText().length();
+        numberOfCharacter.setText(remain + "");
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -132,6 +135,7 @@ public class ComposeDialog extends DialogFragment {
                     btnTweet.setEnabled(true);
                 }
                 numberOfCharacter.setText(charRemain + "");
+
             }
 
             @Override

@@ -19,6 +19,7 @@ import com.thiendn.coderschool.simpletwitter.dialog.ComposeDialog;
 import com.thiendn.coderschool.simpletwitter.model.Tweet;
 import com.thiendn.coderschool.simpletwitter.rest.RestClient;
 import com.thiendn.coderschool.simpletwitter.util.ParseResponse;
+import com.thiendn.coderschool.simpletwitter.util.RealmUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +30,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by thiendn on 05/03/2017.
@@ -50,34 +53,61 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Realm.init(getBaseContext());
+        RealmConfiguration config = new RealmConfiguration
+                .Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
         page = 1;
         ButterKnife.bind(this);
-        restClient = RestApplication.getRestClient();
-        getTimeline();
+        if (RestApplication.MODE == 1){
+            restClient = RestApplication.getRestClient();
+            getTimeline();
 
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                page = 1;
-                getTimeline();
-            }
-        });
+            swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    page = 1;
+                    getTimeline();
+                }
+            });
 
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext(), "clicked", Toast.LENGTH_LONG).show();
-                android.app.FragmentManager fm = getFragmentManager();
-                ComposeDialog composeDialog = ComposeDialog.newInstance(null, getBaseContext(), new ComposeDialog.Listener() {
-                    @Override
-                    public void onComposeTweetSuccess(Tweet tweet) {
-                        mTweets.add(0, tweet);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                });
-                composeDialog.show(fm, "Pose");
-            }
-        });
+            btnAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getBaseContext(), "clicked", Toast.LENGTH_LONG).show();
+                    android.app.FragmentManager fm = getFragmentManager();
+                    ComposeDialog composeDialog = ComposeDialog.newInstance(null, getBaseContext(), new ComposeDialog.Listener() {
+                        @Override
+                        public void onComposeTweetSuccess(Tweet tweet) {
+                            mTweets.add(0, tweet);
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    composeDialog.show(fm, "Pose");
+                }
+            });
+        }else {
+            mTweets = RealmUtil.getAll();
+            mAdapter = new TimeLineAdapter(mTweets, new TimeLineAdapter.Listener() {
+                @Override
+                public void onLoadMore() {
+
+                }
+
+                @Override
+                public void onItemClicked(View itemView) {
+
+                }
+
+                @Override
+                public void onReply(String screenname) {
+
+                }
+            });
+            fetchTimeline();
+        }
     }
 
     private void getTimeline(){
@@ -94,6 +124,7 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
                         setupAdapter();
                         fetchTimeline();
                         swipeContainer.setRefreshing(false);
+                        RealmUtil.store(mTweets);
                     }else {
                         for (Tweet tweet: ParseResponse.getTweetFromResp(response)){
                             mTweets.add(tweet);

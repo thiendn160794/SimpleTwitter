@@ -13,6 +13,7 @@ import com.thiendn.coderschool.simpletwitter.rest.RestClient;
 public class RestApplication extends Application {
     private static Context context;
     public static User mUser;
+    public static int MODE = 0;
     @Override
     public void onCreate() {
         super.onCreate();

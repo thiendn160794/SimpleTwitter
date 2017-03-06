@@ -11,6 +11,7 @@ import com.thiendn.coderschool.simpletwitter.R;
 import com.thiendn.coderschool.simpletwitter.application.RestApplication;
 import com.thiendn.coderschool.simpletwitter.model.User;
 import com.thiendn.coderschool.simpletwitter.rest.RestClient;
+import com.thiendn.coderschool.simpletwitter.util.NetworkUtil;
 import com.thiendn.coderschool.simpletwitter.util.ParseResponse;
 
 import org.json.JSONObject;
@@ -39,17 +40,25 @@ public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
 
     @Override
     public void onLoginSuccess() {
-        getClient().getUserCurrent(new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                if (response != null){
-                    RestApplication.mUser = ParseResponse.getCurrentUserFromResp(response);
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
+        if (NetworkUtil.isConnected(LoginActivity.this)){
+            RestApplication.MODE = 1;
+            getClient().getUserCurrent(new JsonHttpResponseHandler(){
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    if (response != null){
+                        RestApplication.mUser = ParseResponse.getCurrentUserFromResp(response);
+                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(intent);
+                    }
                 }
-            }
-        });
+            });
+        }else {
+            RestApplication.MODE = -1;
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+        }
+
     }
 
     @Override

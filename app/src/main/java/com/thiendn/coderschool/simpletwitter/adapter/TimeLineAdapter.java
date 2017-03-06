@@ -63,7 +63,8 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
                 .into(holder.ivProfile);
         Log.d("TimeLineAdapter","text: " + mTweets.get(position).getText() + ", position: " + position + ", media: " + mTweets.get(position).getEntity().getMedia());
         if (mTweets.get(position).getEntity().getMedia() == null) holder.ivMedia.setVisibility(View.GONE);
-        if (mTweets.get(position).getEntity().getMedia() != null){
+        if (mTweets.get(position).getEntity().getMedia() != null
+                && mTweets.get(position).getEntity().getMedia().size() > 0){
             if (mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl()!= null &&
                     !mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl().equals("")){
                 holder.ivMedia.setVisibility(View.VISIBLE);

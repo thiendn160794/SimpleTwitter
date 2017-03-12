@@ -1,17 +1,25 @@
-package com.thiendn.coderschool.simpletwitter.activity;
+package com.thiendn.coderschool.simpletwitter.fragments;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
-import com.codepath.oauth.OAuthLoginActionBarActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.thiendn.coderschool.simpletwitter.R;
+import com.thiendn.coderschool.simpletwitter.activity.MainActivity;
+import com.thiendn.coderschool.simpletwitter.activity.ProfileActivity;
 import com.thiendn.coderschool.simpletwitter.adapters.TimeLineAdapter;
 import com.thiendn.coderschool.simpletwitter.application.RestApplication;
 import com.thiendn.coderschool.simpletwitter.dialog.ComposeDialog;
@@ -33,14 +41,16 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 /**
- * Created by thiendn on 05/03/2017.
+ * Created by thiendn on 12/03/2017.
  */
 
-public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
+public class HomePageFragment extends Fragment{
     RestClient restClient;
     int page;
     List<Tweet> mTweets;
     TimeLineAdapter mAdapter;
+    private Activity mActivity;
+    private Context mContext;
 
     @BindView(R.id.btnAdd)
     FloatingActionButton btnAdd;
@@ -48,18 +58,42 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
     RecyclerView rvTimeline;
     @BindView(R.id.swipeContainer)
     SwipeRefreshLayout swipeContainer;
+
+
+    public static HomePageFragment newInstance(){
+        Bundle bundle = new Bundle();
+        HomePageFragment fragment = new HomePageFragment();
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MainActivity){
+            mActivity = (MainActivity) context;
+        }
+        mContext = context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        Realm.init(getBaseContext());
+        Bundle bundle = getArguments();
+//        ButterKnife.bind((MainActivity)mContext);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_tweets, container, false);
+        Realm.init(mContext);
         RealmConfiguration config = new RealmConfiguration
                 .Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
         page = 1;
-        ButterKnife.bind(this);
+        ButterKnife.bind(this, view);
         if (RestApplication.MODE == 1){
             restClient = RestApplication.getRestClient();
             getTimeline();
@@ -75,8 +109,8 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
             btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    android.app.FragmentManager fm = getFragmentManager();
-                    ComposeDialog composeDialog = ComposeDialog.newInstance(0, null, getBaseContext(), new ComposeDialog.Listener() {
+                    android.app.FragmentManager fm = getActivity().getFragmentManager();
+                    ComposeDialog composeDialog = ComposeDialog.newInstance(0, null, getContext(), new ComposeDialog.Listener() {
                         @Override
                         public void onComposeTweetSuccess(Tweet tweet) {
                             mTweets.add(0, tweet);
@@ -106,11 +140,12 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
 
                 @Override
                 public void onProfileClicked(User user) {
-
+                    // TODO : add logic code start ProfileActivity
                 }
             });
             fetchTimeline();
         }
+        return view;
     }
 
     private void getTimeline(){
@@ -162,7 +197,6 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
             }
         });
     }
-
     private void setupAdapter(){
         mAdapter = new TimeLineAdapter(mTweets, new TimeLineAdapter.Listener() {
             @Override
@@ -178,8 +212,8 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
 
             @Override
             public void onReply(long postId, String screenname) {
-                android.app.FragmentManager fm = getFragmentManager();
-                ComposeDialog composeDialog = ComposeDialog.newInstance(postId, screenname, getBaseContext(), new ComposeDialog.Listener() {
+                android.app.FragmentManager fm = mActivity.getFragmentManager();
+                ComposeDialog composeDialog = ComposeDialog.newInstance(postId, screenname, mContext, new ComposeDialog.Listener() {
                     @Override
                     public void onComposeTweetSuccess(Tweet tweet) {
                         mTweets.add(0, tweet);
@@ -191,26 +225,17 @@ public class HomeActivity extends OAuthLoginActionBarActivity<RestClient> {
 
             @Override
             public void onProfileClicked(User user) {
-                //TODO : add logic code start ProfileActivity
-
+                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                intent.putExtra(ProfileActivity.USER, user);
+                startActivity(intent);
             }
         });
     }
 
     private void fetchTimeline(){
         RecyclerView.LayoutManager layoutManager =
-                new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false);
+                new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         rvTimeline.setLayoutManager(layoutManager);
         rvTimeline.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onLoginSuccess() {
-
-    }
-
-    @Override
-    public void onLoginFailure(Exception e) {
-        Log.d("HomeActivity", "login failed");
     }
 }

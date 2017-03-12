@@ -48,14 +48,14 @@ public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
                     super.onSuccess(statusCode, headers, response);
                     if (response != null){
                         RestApplication.mUser = ParseResponse.getCurrentUserFromResp(response);
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                     }
                 }
             });
         }else {
             RestApplication.MODE = -1;
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }
 

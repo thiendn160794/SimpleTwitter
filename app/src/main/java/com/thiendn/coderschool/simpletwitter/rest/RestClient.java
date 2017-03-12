@@ -3,6 +3,7 @@ package com.thiendn.coderschool.simpletwitter.rest;
 import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
+import com.codepath.utils.AsyncSimpleTask;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -65,5 +66,27 @@ public class RestClient extends OAuthBaseClient {
         params.put("in_reply_to_status_id", idPost);
         params.put("status", body);
         getClient().post(apiUrl, params, handler);
+    }
+
+    public void getMentionTimeline(int page, JsonHttpResponseHandler handler){
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("page", String.valueOf(page));
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getTweetByUser(String screenName, int page, JsonHttpResponseHandler handler){
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("page", String.valueOf(page));
+        params.put("screen_name", screenName);
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getPannerFromUser(String screenName, JsonHttpResponseHandler handler){
+        String apiUrl = getApiUrl("users/profile_banner.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenName);
+        getClient().get(apiUrl, params, handler);
     }
 }

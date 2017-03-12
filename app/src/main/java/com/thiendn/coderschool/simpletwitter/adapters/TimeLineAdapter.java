@@ -1,6 +1,7 @@
-package com.thiendn.coderschool.simpletwitter.adapter;
+package com.thiendn.coderschool.simpletwitter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.thiendn.coderschool.simpletwitter.R;
 import com.thiendn.coderschool.simpletwitter.application.RestApplication;
 import com.thiendn.coderschool.simpletwitter.model.Tweet;
+import com.thiendn.coderschool.simpletwitter.model.User;
 import com.thiendn.coderschool.simpletwitter.util.DateUtil;
 import com.thiendn.coderschool.simpletwitter.util.ParseResponse;
 
@@ -123,6 +125,13 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
             }
         });
 
+        holder.ivProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onProfileClicked(mTweets.get(position).getUser());
+            }
+        });
+
     }
 
     private void updateFavoriteTweet(Tweet tweet, int position){
@@ -180,5 +189,6 @@ public class TimeLineAdapter extends RecyclerView.Adapter<TimeLineAdapter.ViewHo
         void onLoadMore();
         void onItemClicked(View itemView);
         void onReply(long postId, String screenname);
+        void onProfileClicked(User user);
     }
 }

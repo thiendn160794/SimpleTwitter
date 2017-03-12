@@ -112,7 +112,7 @@ public class ComposeDialog extends DialogFragment {
         String screenname = RestApplication.mUser.getScreenName();
         String profileimage = RestApplication.mUser.getImageProfile();
         tvUsername.setText(username);
-        tvScreenname.setText("@" + screenname);
+        tvScreenname.setText("@" + screenname + " ");
         Picasso.with(mContext).load(profileimage)
                 .into(ivProfile);
         int remain = 140 - editText.getText().length();

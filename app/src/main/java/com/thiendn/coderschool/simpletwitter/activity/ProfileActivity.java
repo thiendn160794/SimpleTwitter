@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.thiendn.coderschool.simpletwitter.R;
 import com.thiendn.coderschool.simpletwitter.adapters.ProfilePagerAdapter;
 import com.thiendn.coderschool.simpletwitter.adapters.TimeLineAdapter;
+import com.thiendn.coderschool.simpletwitter.application.RestApplication;
 import com.thiendn.coderschool.simpletwitter.model.User;
 
 import butterknife.BindView;
@@ -75,5 +77,8 @@ public class ProfileActivity extends AppCompatActivity{
         tvDescription.setText(mUser.getDescription());
         tvNumberOfFollower.setText(mUser.getNumberOfFollower() + "");
         tvNumberOfFollowing.setText(mUser.getNumberOfFollowing() + "");
+        if (mUser.getScreenName().equals(RestApplication.mUser.getScreenName())){
+            btnFollow.setVisibility(View.GONE);
+        }
     }
 }

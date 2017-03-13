@@ -24,7 +24,6 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
 
     public PictureAdapter(List<Tweet> tweets){
         mTweets = tweets;
-
     }
 
     @Override
@@ -36,14 +35,16 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl()!= null &&
-                !mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl().equals("")){
-            holder.ivPicture.setVisibility(View.VISIBLE);
-            Glide.with(mContext).load(mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl())
-                    .into(holder.ivPicture);
-            return;
-        }
         holder.ivPicture.setVisibility(View.GONE);
+        if (mTweets.get(position).getEntity().getMedia() != null
+                && mTweets.get(position).getEntity().getMedia().size() > 0){
+            if (mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl()!= null &&
+                    !mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl().equals("")){
+                holder.ivPicture.setVisibility(View.VISIBLE);
+                Glide.with(mContext).load(mTweets.get(position).getEntity().getMedia().get(0).getMediaUrl())
+                        .into(holder.ivPicture);
+            }
+        }
     }
 
     @Override

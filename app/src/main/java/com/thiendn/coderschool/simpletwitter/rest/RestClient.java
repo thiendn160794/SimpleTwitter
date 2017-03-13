@@ -95,6 +95,16 @@ public class RestClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("q", query);
         params.put("include_entities", entities);
+        params.put("count", 50);
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getFavoriteTweets(int page, String screenName, JsonHttpResponseHandler handler){
+        String apiUrl = getApiUrl("favorites/list.json");
+        RequestParams params = new RequestParams();
+        params.put("screen_name", screenName);
+        params.put("count", 30);
+        params.put("page", page);
         getClient().get(apiUrl, params, handler);
     }
 }

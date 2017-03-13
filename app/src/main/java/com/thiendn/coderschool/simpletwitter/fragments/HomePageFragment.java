@@ -40,6 +40,8 @@ import cz.msebera.android.httpclient.Header;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+import static com.thiendn.coderschool.simpletwitter.R.id.btnAdd;
+
 /**
  * Created by thiendn on 12/03/2017.
  */

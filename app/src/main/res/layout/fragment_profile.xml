@@ -92,7 +92,7 @@
 
         <TextView
             android:id="@+id/following"
-            android:text="   FOLLOWING"
+            android:text="FOLLOWER"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
@@ -108,7 +108,7 @@
             android:layout_centerHorizontal="true" />
 
         <TextView
-            android:text="FOLLOWER"
+            android:text="FOLLOWING"
             android:layout_marginLeft="17dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

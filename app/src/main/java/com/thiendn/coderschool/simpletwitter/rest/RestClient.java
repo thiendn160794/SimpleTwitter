@@ -89,4 +89,12 @@ public class RestClient extends OAuthBaseClient {
         params.put("screen_name", screenName);
         getClient().get(apiUrl, params, handler);
     }
+
+    public void searchTweets(String query, boolean entities, JsonHttpResponseHandler handler){
+        String apiUrl = getApiUrl("search/tweets.json");
+        RequestParams params = new RequestParams();
+        params.put("q", query);
+        params.put("include_entities", entities);
+        getClient().get(apiUrl, params, handler);
+    }
 }

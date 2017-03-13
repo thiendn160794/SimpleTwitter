@@ -24,7 +24,7 @@ public class ProfilePagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if (position == 1)
+        if (position == 0)
         return TweetFromProfile.newInstance(mUser);
         return ImageFromProfile.newInstance(mUser);
     }
